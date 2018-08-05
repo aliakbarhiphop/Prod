@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Prod</string>
+    <string name="settings">Settings</string>
+    <string name="search_here">Search Here</string>
+    <string name="id">ID :</string>
+    <string name="price">PRICE :</string>
+    <string name="orders">ORDERS :</string>
+    <string name="sales">SALES :</string>
+    <string name="search">Search</string>
+    <string name="add_bill">ADD BILL</string>
+    <string name="add_new_item">Add New Item</string>
+    <string name="name">Name</string>
+
+    <string name="empty_here">Ouhh…It\'\s Empty Here</string>
+
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
+
+    <string name="id_">Id</string>
+    <string name="item_name">Item Name</string>
+    <string name="price_">Price</string>
+    <string name="orders_">Orders</string>
+    <string name="sales_">Sales</string>
+
+    <string name="zero">0</string>
+    <string name="back">Back</string>
+    <string name="view">View</string>
+    <string name="manager">Manager</string>
+    <string name="credit">Credit</string>
+    <string name="paid">Paid</string>
+    <string name="total">Total</string>
+    <string name="deals">Deals</string>
+    <string name="deals_">DEALS :</string>
+    <string name="total_">TOTAL :</string>
+    <string name="paid_">PAID :</string>
+    <string name="credit_">CREDIT :</string>
+    <string name="manager_">MANAGER :</string>
+    <string name="manager_na">Manager :NA</string>
+    <string name="clear_all">Clear All</string>
+    <string name="clear">Clear</string>
+    <string name="add">Add</string>
+    <string name="between">Between</string>
+    <string name="lower_limit">Lower Limit</string>
+    <string name="upper_limit">Upper Limit</string>
+    <string name="less_than">Less Than</string>
+    <string name="or">Or</string>
+    <string name="greater_than">Greater Than</string>
+    <string name="filter">filter</string>
+    <string name="username">Username</string>
+    <string name="client">Client</string>
+    <string name="clients">CLIENTS :</string>
+    <string name="username_">USERNAME :</string>
+    <string name="password">Password</string>
+    <string name="no_of_clients">No. Of Clients</string>
+    <string name="na">NA</string>
+    <string name="pay">Pay :</string>
+    <string name="total__">Total :</string>
+    <string name="itemname_itemid">ItemId / ItemName</string>
+    <string name="qty">QTY</string>
+    <string name="disc">Disc %</string>
+    <string name="pay_">Pay</string>
+    <string name="customer">Customer</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="date">Date</string>
+    <string name="discount_percentage">Discount Percentage</string>
+    <string name="discount">Discount</string>
+    <string name="quantity">Quantity</string>
+</resources>
