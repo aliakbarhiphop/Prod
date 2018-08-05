@@ -176,6 +176,7 @@ public class StockAddActivity extends AppCompatActivity {
                     values.add(new InsertMysql(ProdContract.Stock.COLUMN_PRICE, price));
                     values.add(new InsertMysql(ProdContract.Stock.COLUMN_ORDER, order));
                     values.add(new InsertMysql(ProdContract.Stock.COLUMN_SALES, totSales));
+                    values.add(new InsertMysql(ProdContract.Stock.COLUMN_ENABLED, "0"));
                     if (editMode) {
                         updateStock(values);
                     } else {

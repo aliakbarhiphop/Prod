@@ -107,8 +107,8 @@ public class StockActivity extends AppCompatActivity
                     displayStock();
                 } else {
                     String columnName = getColumnNameForSearch(CURRENT_SELECT_FILTER);
-                    String selectionSearch = columnName + " LIKE ?";
-                    String[] selectionArgsSerach = {fromEditText + "%"};
+                    String selectionSearch = columnName + " LIKE ? AND " + ProdContract.Stock.COLUMN_ENABLED + "=?";
+                    String[] selectionArgsSerach = {fromEditText + "%","0"};
                     filterStock(selectionSearch, selectionArgsSerach);
                 }
             }
@@ -284,7 +284,7 @@ public class StockActivity extends AppCompatActivity
                 ProdContract.Stock.TABLE_NAME
                 , new String[]{ProdContract.Stock._ID, ProdContract.Stock.COLUMN_ITEM_NAME, ProdContract.Stock.COLUMN_PRICE
                         , ProdContract.Stock.COLUMN_ORDER, ProdContract.Stock.COLUMN_SALES}
-                , null, null, ProdContract.Stock.COLUMN_ITEM_NAME + " ASC")
+                , ProdContract.Stock.COLUMN_ENABLED + "=?", new String[]{"0"}, ProdContract.Stock.COLUMN_ITEM_NAME + " ASC")
                 , new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
