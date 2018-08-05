@@ -10,6 +10,7 @@ public class ProdContract {
         public static final String COLUMN_PRICE = "price";
         public static final String COLUMN_ORDER = "orders";
         public static final String COLUMN_SALES = "sales";
+        public static final String COLUMN_ENABLED = "enableds";
 
         //FULL COLUMN NAME
         public static final String FULL_COLUMN_ID = TABLE_NAME + "." + _ID;
@@ -17,6 +18,7 @@ public class ProdContract {
         public static final String FULL_COLUMN_PRICE = TABLE_NAME + "." + COLUMN_PRICE;
         public static final String FULL_COLUMN_ORDER = TABLE_NAME + "." + COLUMN_ORDER;
         public static final String FULL_COLUMN_SALES = TABLE_NAME + "." + COLUMN_SALES;
+        public static final String FULL_COLUMN_ENABLED = TABLE_NAME + "." + COLUMN_ENABLED;
 
     }
 
