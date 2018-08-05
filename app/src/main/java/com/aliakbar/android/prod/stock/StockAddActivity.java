@@ -44,7 +44,11 @@ public class StockAddActivity extends AppCompatActivity {
     boolean orderFirstTime = true;
     boolean priceFirstTime = true;
 
+    boolean upFlag = false;
+
     boolean ediTextTouched = false;
+
+    String priceForUpdate = "";
 
     private EditText mNameAdd;
     private EditText mTotalSale;
@@ -178,7 +182,11 @@ public class StockAddActivity extends AppCompatActivity {
                     values.add(new InsertMysql(ProdContract.Stock.COLUMN_SALES, totSales));
                     values.add(new InsertMysql(ProdContract.Stock.COLUMN_ENABLED, "0"));
                     if (editMode) {
-                        updateStock(values);
+                        if (priceForUpdate.matches(price)) {
+                            updateStock(values);
+                        } else {
+                            checkItHasBeenUsed(values);
+                        }
                     } else {
                         saveItem(values);
                     }
@@ -190,9 +198,8 @@ public class StockAddActivity extends AppCompatActivity {
 
         if (editMode) {
             Intent extractIdIntent = getIntent();
-            String idFromIntent = extractIdIntent.getStringExtra("selectedStockId");
-            idForUpdate = idFromIntent;
-            setUpEditMode(idFromIntent);
+            idForUpdate = extractIdIntent.getStringExtra("selectedStockId");
+            setUpEditMode(idForUpdate);
         }
     }
 
@@ -229,7 +236,6 @@ public class StockAddActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-
     void saveItem(List<InsertMysql> insert) {
         final VolleyRequest volleyRequest = new VolleyRequest(VolleyHelper.insertVolly(ProdContract.Stock.TABLE_NAME, insert)
                 , new Response.Listener<String>() {
@@ -244,8 +250,9 @@ public class StockAddActivity extends AppCompatActivity {
                         Toast.makeText(StockAddActivity.this, "Saved Successfully. Id :" + jsonObject.getInt("idOfLastInsertedRaw")
                                 , Toast.LENGTH_SHORT).show();
                         ediTextTouched = false;
-                        finish();
-
+                        if (!upFlag) {
+                            finish();
+                        }
                     } else {
                         if (jsonObject.getString("status").equals("INVALID")) {
                             Toast.makeText(StockAddActivity.this, "User Not Found", Toast.LENGTH_SHORT).show();
@@ -297,6 +304,7 @@ public class StockAddActivity extends AppCompatActivity {
 
                         String price = "" + stock.getPrice();
                         mPriceAdd.setText(price);
+                        priceForUpdate = price;
 
                         String order = "" + stock.getOrder();
                         mOrderAdd.setText(order);
@@ -347,8 +355,10 @@ public class StockAddActivity extends AppCompatActivity {
                                         + " Raw"
                                 , Toast.LENGTH_SHORT).show();
                         ediTextTouched = false;
+                        if (upFlag) {
+                            upFlag = false;
+                        }
                         finish();
-
                     } else {
                         if (jsonObject.getString("status").equals("INVALID")) {
                             Toast.makeText(StockAddActivity.this, "User Not Found", Toast.LENGTH_SHORT).show();
@@ -374,5 +384,55 @@ public class StockAddActivity extends AppCompatActivity {
             }
         });
         addStockRequestQueue.add(volleyRequest);
+    }
+
+    void checkItHasBeenUsed(final List<InsertMysql> insert) {
+        String selection = ProdContract.Cart.COLUMN_ITEM_ID + "=?";
+        String selectionArgs[] = new String[]{idForUpdate};
+        final VolleyRequest volleyRequest = new VolleyRequest(VolleyHelper.selectVolly(
+                ProdContract.Cart.TABLE_NAME
+                , new String[]{ProdContract.Cart._ID}
+                , selection, selectionArgs, null)
+                , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("Login Response", response);
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getBoolean("success")) {
+
+                        upFlag = true;
+                        saveItem(insert);
+                        int indexLastInsert = insert.size() - 1;
+                        insert.remove(indexLastInsert);
+                        insert.add(new InsertMysql(ProdContract.Stock.COLUMN_ENABLED, "1"));
+                        updateStock(insert);
+
+                    } else {
+                        if (jsonObject.getString("status").equals("INVALID")) {
+                            Toast.makeText(StockAddActivity.this, "User Not Found", Toast.LENGTH_SHORT).show();
+                        } else if (jsonObject.getString("status").equals("EMPTY DATABASE")) {
+                            updateStock(insert);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(StockAddActivity.this, "Bad Response From Server", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof ServerError)
+                    Toast.makeText(StockAddActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                else if (error instanceof TimeoutError)
+                    Toast.makeText(StockAddActivity.this, "Connection Timed Out", Toast.LENGTH_SHORT).show();
+                else if (error instanceof NetworkError)
+                    Toast.makeText(StockAddActivity.this, "Bad Network Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+        stockEditRequestQueue.add(volleyRequest);
     }
 }
