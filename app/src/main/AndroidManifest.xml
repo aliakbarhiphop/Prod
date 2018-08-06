@@ -59,7 +59,8 @@
         <activity
             android:name=".bill.AddCart"
             android:launchMode="singleTask" />
-        <activity android:name=".bill.CartAdjustActivity"></activity>
+        <activity android:name=".bill.CartAdjustActivity" />
+        <activity android:name=".sales.SalesActivity"></activity>
     </application>
 
 </manifest>
