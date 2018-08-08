@@ -95,7 +95,6 @@ public class CartAdjustActivity extends AppCompatActivity implements CartAdjustA
                 int swipeTOTAL = (int) tempHolde.itemView.getTag(1);
                 int swipePAY = (int) tempHolde.itemView.getTag(2);
 
-//TODO
                 CartAdjustFragment cartAdjustFragment = new CartAdjustFragment();
 
                 FragmentManager fm = getFragmentManager();
@@ -110,23 +109,17 @@ public class CartAdjustActivity extends AppCompatActivity implements CartAdjustA
                 }
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-                //TODO END
-
 
                 if (Dpay < 0) {
                     int tempPay = -1 * Dpay;
                     if (swipePAY >= tempPay) {
                         cartAdjustFragment.setupInput(Dpay, 0);
-                        //TODO --> 1 NOTE SUBSTARCT
 
                     } else {
-                        //TODO --> 2 NOTE  SUBSTARCT
                         limitOfItem = tempPay - (tempPay - swipePAY);
                         cartAdjustFragment.setupInput(Dpay, limitOfItem);
                     }
                 } else {
-
-                    //TODO --> 1 NOTE  ADDITION
                     cartAdjustFragment.setupInput(Dpay, 0);
                 }
             }
