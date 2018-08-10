@@ -1,5 +1,23 @@
 package com.aliakbar.android.prod.data;
 
+import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import com.aliakbar.android.prod.network.VolleyHelper;
+import com.aliakbar.android.prod.network.VolleyRequest;
+import com.aliakbar.android.prod.sales.SalesActivity;
+import com.aliakbar.android.prod.sales.SalesItem;
+import com.aliakbar.android.prod.stock.StockActivity;
+import com.android.volley.NetworkError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +91,6 @@ public class JsonExtract {
         return returnStaffList;
     }
 
-
     //BILL
     public static List<Cart> extractCartJson(JSONArray cartJson) throws JSONException {
         List<Cart> returnCartList = new ArrayList<>();
@@ -90,8 +107,6 @@ public class JsonExtract {
                     , obj.getInt(ProdContract.Cart.FULL_COLUMN_DISCOUNT_PER)
                     , obj.getInt(ProdContract.Cart.FULL_COLUMN_PAY)));
         }
-
-
         return returnCartList;
     }
 }
