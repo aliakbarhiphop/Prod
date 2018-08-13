@@ -3,7 +3,11 @@ package com.aliakbar.android.prod.sales;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.aliakbar.android.prod.R;
@@ -26,14 +30,81 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SalesActivity extends AppCompatActivity {
+public class SalesActivity extends AppCompatActivity implements SalesAdapter.SalesAdapterOnClickListener {
     List<Sales> salesList;
     int sizeOfSalesItem, trackSalesIncrement = 0;
+
+    SalesAdapter salesAdapter;
+    private RecyclerView recyclerView;
+    RequestQueue salesRequestQueue;
+    FrameLayout emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales);
+
+        emptyView = findViewById(R.id.sales_empty_view);
+
+        recyclerView = findViewById(R.id.sales_recycler_view);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        salesAdapter = new SalesAdapter(this, this);
+        recyclerView.setAdapter(salesAdapter);
+        salesRequestQueue = Volley.newRequestQueue(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displaySales();
+    }
+
+    void displaySales() {
+        String tableName = ProdContract.Customer.TABLE_NAME + " INNER JOIN " + ProdContract.Bill.TABLE_NAME
+                + " ON " + ProdContract.Bill.FULL_COLUMN_CUSTOMER_ID + " = " + ProdContract.Customer.FULL_COLUMN_ID
+                + " INNER JOIN " + ProdContract.Staff.TABLE_NAME
+                + " ON " + ProdContract.Staff.FULL_COLUMN_ID + " = " + ProdContract.Customer.FULL_COLUMN_CUSTOMER_MANAGER_ID;
+        String[] projection = new String[]{ProdContract.Bill.FULL_COLUMN_ID, ProdContract.Bill.FULL_COLUMN_DATE
+                , ProdContract.Customer.FULL_COLUMN_CUSTOMER_NAME, ProdContract.Staff.FULL_COLUMN_STAFF_NAME, ProdContract.Bill.FULL_COLUMN_TOTAL
+                , ProdContract.Bill.COLUMN_DISCOUNT_PER, ProdContract.Bill.FULL_COLUMN_PAY};
+
+        final VolleyRequest volleyRequest = new VolleyRequest(VolleyHelper.selectVolly(tableName
+                , projection, null, null, ProdContract.Bill.FULL_COLUMN_CUSTOMER_ID + " DESC")
+                , new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("Login Response", response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getBoolean("success")) {
+                        extractSales(jsonObject.getJSONArray("cursor"), SalesActivity.this);
+                    } else {
+                        if (jsonObject.getString("status").equals("INVALID")) {
+                            Toast.makeText(SalesActivity.this, "User Not Found", Toast.LENGTH_SHORT).show();
+                        } else if (jsonObject.getString("status").equals("EMPTY DATABASE")) {
+                            emptyView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(SalesActivity.this, "Bad Response From Server", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if (error instanceof ServerError)
+                    Toast.makeText(SalesActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                else if (error instanceof TimeoutError)
+                    Toast.makeText(SalesActivity.this, "Connection Timed Out", Toast.LENGTH_SHORT).show();
+                else if (error instanceof NetworkError)
+                    Toast.makeText(SalesActivity.this, "Bad Network Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+        salesRequestQueue.add(volleyRequest);
     }
 
     void extractSales(JSONArray salesArray, Context context) throws JSONException {
@@ -84,12 +155,14 @@ public class SalesActivity extends AppCompatActivity {
                         trackSalesIncrement++;
                         if (sizeOfSalesItem == trackSalesIncrement) {
                             trackSalesIncrement = 0;
-                            //TODO
+                            emptyView.setVisibility(View.GONE);
+                            salesAdapter.swapCursor(salesList);
                         }
                     } else {
                         if (jsonObject.getString("status").equals("INVALID")) {
                             Toast.makeText(context, "User Not Found", Toast.LENGTH_SHORT).show();
                         } else if (jsonObject.getString("status").equals("EMPTY DATABASE")) {
+
                         }
                     }
                 } catch (JSONException e) {
@@ -110,5 +183,10 @@ public class SalesActivity extends AppCompatActivity {
             }
         });
         SalesForItemQueue.add(volleyRequest);
+    }
+
+    @Override
+    public void onClick(String mCurrentItemId) {
+        //TODO
     }
 }

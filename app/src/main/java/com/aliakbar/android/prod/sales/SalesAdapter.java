@@ -100,7 +100,10 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.SalesViewHol
 
         @Override
         public void onClick(View view) {
-            //TODO BILL ID ON SELECT
+            int adapterPosition = getAdapterPosition();
+            Sales sal = sales.get(adapterPosition);
+            String idCurrentSelected = "" + sal.getBillId();
+            salesAdapterOnClickListener.onClick(idCurrentSelected);
         }
     }
 
